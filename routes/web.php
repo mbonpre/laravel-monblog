@@ -1,0 +1,26 @@
+<?php
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ArticleController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentaireController;
+
+Route::get('/', [BlogController::class, 'index'])->name('home');
+
+Route::get('/blog/{article}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/articles/{article}/commentaires', [CommentaireController::class, 'store'])->name('commentaires.store');
+    Route::delete('/commentaires/{commentaire}', [CommentaireController::class, 'destroy'])->name('commentaires.destroy');
+    // Routes articles
+    Route::resource('articles', ArticleController::class);
+});
+
+require __DIR__ . '/auth.php';
